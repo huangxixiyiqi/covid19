@@ -1,0 +1,21 @@
+# 配置数据库配置
+spring:
+  datasource:
+    username: root
+    password: zyc766623393
+    #?serverTimezone=UTC解决时区的报错
+    url: jdbc:mysql://localhost:3306/cov19?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# 配置mybatis-plus
+mybatis-plus:
+  configuration:
+    # 配置日志  (默认控制台输出)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true                # 开启驼峰命名法
+  mapper-locations: classpath:mapper/**.xml            # 配置mapper.xml路径
+  check-config-location: true                         # 检查xml文件是否存在
+  type-aliases-package: com.cov19.entity    # 实体类存放位置
+# 配置端口
+server:
+  port: 8080

@@ -1,0 +1,812 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-12-21 10:16:41
+ * @LastEditTime: 2022-06-22 09:55:58
+ * @LastEditors: huangxixiyiqi huangxixiyiqi@gmail.com
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \code\foreign.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>疫情大数据可视化</title>
+    <!-- 重置样式表 -->
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/normalize.css">
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="./js/vue.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="./css/index.css">
+
+    <!-- 引入组件库 -->
+    <!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+    <script src="js/index.js"></script>
+    <!-- 引入axios -->
+    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+    <script src="js/axios.min.js"></script>
+    <script type="text/javascript" src="./js/echarts.min.js"></script>
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="icon" href="../img/cqjtu.jpg" type="image/x-icon">
+
+    <style>
+        body {
+            background-color: #10aeb5;
+        }
+
+        #app {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+        }
+
+        .top-btn a {
+            display: block;
+            text-decoration: none;
+            color: black;
+            font-size: 25px;
+            background-color: #ffffff;
+            height: 30px;
+            float: left;
+            line-height: 30px;
+            text-align: center;
+            width: 400px;
+            padding-bottom: 10px;
+
+        }
+
+        .top-btn #y2 {
+            color: #5daeb5;
+        }
+
+        .top-wrapper {
+            border-top: 1px solid #f5f6f7;
+            padding: 10px;
+
+        }
+
+        .top-wrapper .title-wrapper {
+            float: left;
+        }
+
+        .title-wrapper {
+            margin-bottom: 10px;
+        }
+
+        .title-wrapper .title {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .title-wrapper .subtitle {
+            display: block;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .top-wrapper .select {
+            float: right;
+        }
+
+        .inner-wrapper {
+            border-bottom: 1px solid #f5f6f7;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+
+        .inner-wrapper .row {
+            float: left;
+            padding: 10px;
+            width: 800px;
+        }
+
+        .row .item0 {
+            float: left;
+            width: 266px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+
+        }
+
+        .row .item1 {
+            float: left;
+            width: 400px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+
+        }
+
+        .item0 span {
+            display: block;
+        }
+
+        .item0 .text1,
+        .item1 .text1 {
+            height: 30px;
+            font-size: 15px;
+            display: block;
+        }
+
+        .item0 .text2,
+        .item1 .text2 {
+            height: 20px;
+            font-size: 19px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .item0 .text3,
+        .item1 .text3 {
+            height: 10px;
+            font-size: 13px;
+            display: block;
+            color: #999999;
+        }
+
+        .control-warpper {
+            border-bottom: 1px solid #f5f6f7;
+            border-top: 1px solid #f5f6f7;
+            padding: 20px 0;
+        }
+
+        thead .cell {
+            background-color: #f5f6f7;
+            font-size: 13px;
+            color: #555555;
+            line-height: 40px !important;
+
+
+        }
+
+        thead .el-table_1_column_1 .cell {
+            text-align: left;
+        }
+
+        tbody .el-table_1_column_1 .cell {
+            font-size: 16px;
+            color: #00bec7;
+            text-align: left;
+            line-height: 50px;
+            border-bottom: 1px solid #fafafa;
+        }
+
+        tbody .el-table_1_column_2 .cell {
+            font-size: 16px;
+            color: #2E7BE6;
+            text-align: center;
+            line-height: 50px;
+            font-weight: bold;
+            border-bottom: 1px solid #fafafa;
+        }
+
+        tbody .el-table_1_column_3 .cell,
+        tbody .el-table_1_column_4 .cell {
+            font-size: 16px;
+            color: #555555;
+            text-align: center;
+            line-height: 50px;
+            border-bottom: 1px solid #fafafa;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="w" style="margin-top: 150px;background-color: white; border-radius: 10px;padding: 20px;">
+        <div class="top-btn clearfix">
+            <a href="./index.html" id="y1">国内疫情</a>
+            <a href="./foreign.html" id="y2">全球疫情</a>
+        </div>
+        <div class="top-wrapper clearfix">
+            <div class="title-wrapper">
+                <span class="title">{{title}}</span>
+                <span class="subtitle">{{subtitle}}</span>
+            </div>
+            <el-select v-model="region" filterable placeholder="请选择" class="select" @change="query">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
+        <!-- 国内疫情 -->
+        <div class="inner-wrapper clearfix">
+            <div class="row">
+                <div class="item0">
+                    <el-tooltip class="item" effect="dark" content="计算方法： 现有确诊数=累计确诊数-累计治愈数-累计死亡数。" placement="left">
+                        <span class="text1">现有确诊</span>
+                    </el-tooltip>
+                    <span class="text2" style="color: #ff6a57;">{{current_count}}</span>
+                    <span class="text3">较昨日<span
+                            style="display: inline;color: #ff6a57;font-weight: bold;">{{comp_current}}</span></span>
+                </div>
+                <div class="item0">
+                    <span class="text1">现有疑似</span>
+                    <span class="text2" style="color: #ec9217;">{{suspected_count}}</span>
+                    <span class="text3">较昨日<span
+                            style="display: inline;color: #ef9262;font-weight: bold;">{{comp_suspected}}</span></span>
+                </div>
+                <div class="item0">
+                    <span class="text1">累计确诊</span>
+                    <span class="text2" style="color: #e83132;">{{confirmed_count}}</span>
+                    <span class="text3">较昨日<span
+                            style="display: inline;color: #ec316d;font-weight: bold;">{{comp_confirmed}}</span></span>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="item1">
+                    <span class="text1">累计治愈</span>
+                    <span class="text2" style="color: #10aeb5;">{{cured_count}}</span>
+                    <span class="text3">较昨日<span
+                            style="display: inline;color: #10aeb5;font-weight: bold;">{{comp_cured}}</span></span>
+                </div>
+                <div class="item1">
+                    <span class="text1">累计死亡</span>
+                    <span class="text2" style="color: #4d5054;">{{dead_count}}</span>
+                    <span class="text3">较昨日<span
+                            style="display: inline;color: #4d5054;font-weight: bold;">{{comp_dead}}</span></span>
+                </div>
+
+            </div>
+        </div>
+        <!-- <div id="container" style="height: 600px;width: 800px;"></div> -->
+        <!-- 疫情控制 -->
+        <div class="control-warpper">
+            <div class="title-wrapper">
+                <span class="title">{{title_control}}</span>
+                <span class="subtitle">{{subtitle_control}}</span>
+            </div>
+            <el-table :data="tableData" height="500px" style="width:800px">
+                <el-table-column prop="location" label="地区" width="350">
+                </el-table-column>
+
+                <el-table-column prop="new" label="新增确诊" width="150" class=".etc" sortable>
+                </el-table-column>
+                <el-table-column prop="add" label="现有确诊" class=".etc" sortable>
+                </el-table-column>
+                <el-table-column prop="rate" label="增长率" class=".etc" sortable>
+                </el-table-column>
+            </el-table>
+        </div>
+
+        <!-- 疫情走势 -->
+        <div class="trend-warpper">
+            <div class="top-wrapper clearfix">
+                <div class="title-wrapper">
+                    <span class="title">{{title_trend}}</span>
+                    <span class="subtitle">{{subtitle_trend}}</span>
+                </div>
+                <el-select v-model="trend" filterable placeholder="请选择" class="select" @change="select_trend">
+                    <el-option v-for="item in options_trend" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+                <div id="container1" style="height: 500px;width: 800px;margin-top: 70px;"></div>
+            </div>
+        </div>
+        <!-- 疫苗接种情况 -->
+        <div class="trend-warpper">
+            <div class="top-wrapper clearfix">
+                <div class="title-wrapper">
+                    <span class="title">{{title_vaccine}}</span>
+                    <span class="subtitle">{{subtitle_vaccine}}</span>
+                </div>
+                <el-select v-model="vaccine" filterable placeholder="请选择地区/国家" class="select" @change="select_vaccine">
+                    <el-option v-for="item in options_vaccine" :key="item.value" :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+                <div id="container2" style="height: 400px;width: 800px;margin-top: 70px;"></div>
+                <div id="container3" style="height: 400px;width: 800px;margin-top: 70px;"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        var port = 'http://10.161.235.239:8080'
+        var app = new Vue({
+            el: "#app",
+            created() {
+                // 下拉列表初始化
+                axios.get(port + '/Sea/getCountryName').then(res => {
+                    var data = res.data
+                    for (let i in data) {
+                        this.options.push({
+                            value: data[i],
+                            label: data[i],
+                        })
+                        this.options_trend.push({
+                            value: data[i],
+                            label: data[i],
+                        })
+                    }
+
+                })
+
+                axios.get(port + '/Sea/getNowAndYestData/' + '美国').then(res => {
+                    var data = res.data[0]
+                    console.log(data)
+                    this.title = '美国疫情'
+                    this.subtitle = '数据更新至  ' + data.updateTime
+                    this.current_count = data.confirmedCount - data.deadCount - data.curedCount
+                    this.suspected_count = data.suspectedCount
+                    this.confirmed_count = data.confirmedCount
+                    this.cured_count = data.curedCount
+                    this.dead_count = data.deadCount
+                    var yest = res.data[1]
+                    this.comp_current = this.current_count - (yest.confirmedCount - yest.deadCount - yest.curedCount)
+                    this.comp_suspected = data.suspectedCount - yest.suspectedCount
+                    this.comp_cured = data.curedCount - yest.curedCount
+                    this.comp_confirmed = data.confirmedCount - yest.confirmedCount
+                    this.comp_dead = data.deadCount - yest.deadCount
+                    if (this.comp_current >= 0)
+                        this.comp_current = '+' + this.comp_current
+                    if (this.comp_suspected >= 0)
+                        this.comp_suspected = '+' + this.comp_suspected
+                    if (this.comp_cured >= 0)
+                        this.comp_cured = '+' + this.comp_cured
+                    if (this.comp_confirmed >= 0)
+                        this.comp_confirmed = '+' + this.comp_confirmed
+                    if (this.comp_dead >= 0)
+                        this.comp_dead = '+' + this.comp_dead
+                })
+
+                // 疫情控制 
+                axios.get(port + '/Sea/getNewAndCurData').then(res => {
+                    this.subtitle_control = "数据更新至" + res.data[0].updateTime
+                    for (let i in res.data) {
+                        this.tableData.push({
+                            location: res.data[i].countryName,
+                            new: res.data[i].newConfirm,
+                            add: res.data[i].currentConfirm,
+                            rate: (res.data[i].newConfirm / res.data[i].currentConfirm).toFixed(5),
+                        })
+                    }
+                    console.log(this.tableData[0].new)
+                    console.log(this.tableData)
+                })
+                axios.get(port + '/getAllCountry').then(res => {
+                    for (let i in res.data) {
+                        this.options_vaccine.push({
+                            value: res.data[i],
+                            label: res.data[i]
+                        })
+                    }
+                })
+
+            },
+            data() {
+                return {
+                    title: '',
+                    subtitle: '',
+                    title_control: '疫情控制',
+                    subtitle_control: '日期',
+                    title_trend: '疫情走势',
+                    subtitle_trend: '展示了五种数据的走势，点击上方标题可以选择是否展示该数据的走势',
+                    current_count: '', //现有病例
+                    suspected_count: '',    //疑似病例
+                    confirmed_count: '',    //累计确诊
+                    cured_count: '', //累计治愈  
+                    dead_count: '',//累计死亡
+                    comp_current: '',//较昨日现有病例
+                    comp_suspected: '',//较昨日疑似病例
+                    comp_cured: '',//较昨日治愈病例
+                    comp_confirmed: '',//较昨日累计确诊
+                    comp_dead: '',//较昨日累计死亡
+                    options_trend: [],
+                    trend: '',
+                    options: [],
+                    region: '',
+                    // data1: [],
+                    // data2: [],
+                    tableData: [],
+                    vaccine: 'Afghanistan',
+                    options_vaccine: [],
+                    title_vaccine: '疫苗接种情况',
+                    subtitle_vaccine: '展示某个地区的疫苗接种情况和新增病例，点击上方标题可以选择展示该数据的走势',
+                }
+            },
+            mounted() {
+
+                var data1 = {
+                    source: [
+                        ['amount', 'product']
+                    ]
+                }
+               
+               
+                
+                var date = []
+                var data0 = [
+                    '',
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                ]
+                axios.get(port + '/Sea/getSeaTendencyVo/' + '美国').then(res => {
+                    console.log(port + '/Sea/getSeaTendencyVo/' + '美国')
+                    data0[0] = '美国'
+                    for (let i in res.data) {
+                        date.push(res.data[i].updateTime)
+                        data0[1].push(res.data[i].newConfirm)
+                        data0[2].push(res.data[i].suspectedCount)
+                        data0[3].push(res.data[i].curedCount)
+                        data0[4].push(res.data[i].deadCount)
+                        data0[5].push(res.data[i].currentConfirm)
+                    }
+                    this.drwacharts1(date, data0)
+                })
+                console.log(123)
+                //疫苗接种情况
+                var date12 = []
+                var data012 = [
+                    '',
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                ]
+                console.log(port + '/getVaccineVo/' + this.vaccine)
+                axios.get(port + '/getVaccineVo/' + this.vaccine).then(res => {
+                    data012[0] = res.data[0].location
+                    for (let i in res.data) {
+                        date12.push(res.data[i].date)
+                        data012[1].push(res.data[i].totalVaccinations)
+                        data012[2].push(res.data[i].peopleVaccinated)
+                        data012[3].push(res.data[i].fullyVaccinated)
+                        data012[4].push(res.data[i].newConfirm)
+
+                    }
+                    this.drwacharts2(date12, data012)
+                    this.drwacharts3(date12, data012)
+                })
+            },
+            methods: {
+                // 疫情状况
+                query() {
+                    console.log(this.region)
+                    axios.get(port + '/Sea/getNowAndYestData/' + this.region).then(res => {
+                        var data = res.data[0]
+                        console.log(data)
+                        this.title = data.countryName + '疫情'
+                        this.subtitle = '数据更新至  ' + data.updateTime
+                        this.current_count = data.confirmedCount - data.deadCount - data.curedCount
+                        this.suspected_count = data.suspectedCount
+                        this.confirmed_count = data.confirmedCount
+                        this.cured_count = data.curedCount
+                        this.dead_count = data.deadCount
+                        var yest = res.data[1]
+                        this.comp_current = this.current_count - (yest.confirmedCount - yest.deadCount - yest.curedCount)
+                        this.comp_suspected = data.suspectedCount - yest.suspectedCount
+                        this.comp_cured = data.curedCount - yest.curedCount
+                        this.comp_confirmed = data.confirmedCount - yest.confirmedCount
+                        this.comp_dead = data.deadCount - yest.deadCount
+                        if (this.comp_current >= 0)
+                            this.comp_current = '+' + this.comp_current
+                        if (this.comp_suspected >= 0)
+                            this.comp_suspected = '+' + this.comp_suspected
+                        if (this.comp_cured >= 0)
+                            this.comp_cured = '+' + this.comp_cured
+                        if (this.comp_confirmed >= 0)
+                            this.comp_confirmed = '+' + this.comp_confirmed
+                        if (this.comp_dead >= 0)
+                            this.comp_dead = '+' + this.comp_dead
+
+                    })
+                },
+                select_trend() {
+                    console.log(this.trend)
+                    var date = []
+                    var data0 = [
+                        '',
+                        [],
+                        [],
+                        [],
+                        [],
+                        []
+                    ]
+                    axios.get(port + '/Sea/getSeaTendencyVo/' + this.trend).then(res => {
+                        // console.log(port + '/Sea/getSeaTendencyVo/' + '美国')
+                        data0[0] = this.trend
+                        for (let i in res.data) {
+                            date.push(res.data[i].updateTime)
+                            data0[1].push(res.data[i].newConfirm)
+                            data0[2].push(res.data[i].suspectedCount)
+                            data0[3].push(res.data[i].curedCount)
+                            data0[4].push(res.data[i].deadCount)
+                            data0[5].push(res.data[i].currentConfirm)
+                        }
+                        this.drwacharts1(date, data0)
+                    })
+                },
+                drwacharts(data) {
+
+                    var dom = document.getElementById("container");
+                    var myChart = echarts.init(dom);
+                    var app = {};
+
+                    var option;
+                    option = {
+                        dataset: data,
+                        title: {
+                            text: '全球疫情',
+                            subtext: '现有确诊(单位:例)'
+                        },
+                        grid: { containLabel: true },
+                        xAxis: { name: 'amount' },
+                        yAxis: { type: 'category' },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        dataZoom: [
+                            {
+                                type: 'inside',
+
+                            }
+                        ],
+                        visualMap: {
+                            orient: 'horizontal',
+                            left: 'center',
+                            min: 10,
+                            max: 100,
+                            text: ['High Amount', 'Low Amount'],
+                            // Map the score column to color
+                            dimension: 0,
+                            inRange: {
+                                color: ['#65B581', '#FFCE34', '#FD665F']
+                            }
+                        },
+                        series: [
+                            {
+                                type: 'bar',
+                                encode: {
+                                    // Map the "amount" column to X axis.
+                                    x: 'amount',
+                                    // Map the "product" column to Y axis
+                                    y: 'product'
+                                }
+                            }
+                        ]
+                    };
+
+                    if (option && typeof option === 'object') {
+                        myChart.setOption(option);
+                    }
+
+                },
+
+                drwacharts1(date, data) {
+                    var dom = document.getElementById("container1");
+                    var myChart = echarts.init(dom);
+                    var app = {};
+                    var option;
+                    option = {
+                        title: {
+                            text: data[0]
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['新增走势', '疑似走势', '治愈走势', '死亡走势', '现有确诊走势']
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {}
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: date
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [
+                            {
+                                name: '新增走势',
+                                type: 'line',
+                                data: data[1]
+                            },
+                            {
+                                name: '疑似走势',
+                                type: 'line',
+
+                                data: data[2]
+                            },
+                            {
+                                name: '治愈走势',
+                                type: 'line',
+
+                                data: data[3]
+                            },
+                            {
+                                name: '死亡走势',
+                                type: 'line',
+
+                                data: data[4]
+                            },
+                            {
+                                name: '现有确诊走势',
+                                type: 'line',
+                                data: data[5]
+                            }
+                        ]
+                    };
+
+                    if (option && typeof option === 'object') {
+                        myChart.setOption(option);
+                    }
+
+                },
+                drwacharts2(date, data) {
+                    var dom = document.getElementById("container2");
+                    var myChart = echarts.init(dom);
+                    var app = {};
+                    var option;
+                    option = {
+                        title: {
+                            text: data[0]
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['总接种量', '接种过疫苗（未接种完成）', '完成疫苗接种', '新增确诊']
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {}
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: date
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [
+                            {
+                                name: '总接种量',
+                                type: 'line',
+                                data: data[1]
+                            },
+                            {
+                                name: '接种过疫苗（未接种完成）',
+                                type: 'line',
+                                color: '#ec9217',
+                                data: data[2]
+                            },
+                            {
+                                name: '完成疫苗接种',
+                                type: 'line',
+                                color: '#10aeb5',
+                                data: data[3]
+                            },
+                            {
+                                name: '新增确诊',
+                                type: 'line',
+                                color: 'black',
+                                data: data[4]
+                            },
+
+                        ]
+                    };
+
+                    if (option && typeof option === 'object') {
+                        myChart.setOption(option);
+                    }
+
+                },
+                drwacharts3(date, data) {
+                    var dom = document.getElementById("container3");
+                    var myChart = echarts.init(dom);
+                    var app = {};
+                    var option;
+                    option = {
+                        title: {
+                            text: data[0]
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['总接种量', '接种过疫苗（未接种完成）', '完成疫苗接种', '新增确诊']
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {}
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: date
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [
+
+                            {
+                                name: '新增确诊',
+                                type: 'line',
+                                color: 'black',
+                                data: data[4]
+                            },
+
+                        ]
+                    };
+
+                    if (option && typeof option === 'object') {
+                        myChart.setOption(option);
+                    }
+
+                },
+
+                select_vaccine() {
+                    //疫苗接种情况
+                    var date = []
+                    var data0 = [
+                        '',
+                        [],
+                        [],
+                        [],
+                        [],
+                        []
+                    ]
+                    axios.get(port + '/getVaccineVo/' + this.vaccine).then(res => {
+                        data0[0] = res.data[0].location
+                        for (let i in res.data) {
+                            date.push(res.data[i].date)
+                            data0[1].push(res.data[i].totalVaccinations)
+                            data0[2].push(res.data[i].peopleVaccinated)
+                            data0[3].push(res.data[i].fullyVaccinated)
+                            data0[4].push(res.data[i].newConfirm)
+
+                        }
+                        this.drwacharts2(date, data0)
+                        this.drwacharts3(date, data0)
+                    })
+                },
+            },
+            // data() {
+
+            // }
+        })
+    </script>
+
+</body>
+
+</html>
