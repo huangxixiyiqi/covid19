@@ -10,7 +10,6 @@
 
 
 - [文件目录说明](#文件目录说明)
-- [开发的架构](#开发的架构)
 - [使用到的框架](#使用到的框架)
 - [贡献者](#贡献者)
 - [作者](#作者)
@@ -28,12 +27,10 @@ filetree
 ├── /后端/
 
 ```
-
-
-
-### 开发的架构 
-
-请阅读[ARCHITECTURE.md](https://github.com/shaojintian/Best_README_template/blob/master/ARCHITECTURE.md) 查阅为该项目的架构。
+###### **安装步骤**
+```sh
+git clone https://github.com/huangxixiyiqi/retrieval_demo
+```
 
 
 ### 使用到的框架
